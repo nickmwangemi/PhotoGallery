@@ -12,3 +12,10 @@ export const actionCreators = {
 		payload: { photos, page },
 	}),
 }
+
+export const initialState = {
+	loading: false,
+	error: false,
+	photos: [],
+	nextPage: 1,
+}
