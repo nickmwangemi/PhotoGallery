@@ -11,6 +11,21 @@ export default function App() {
 
 	const { photos, nextPage, loading, error } = state
 
+	const fetchPhotos = useCallback(async () => {
+		dispatch(actionCreators.loading())
+
+		try {
+			const nextPhotos = await getList(nextPage)
+			dispatch(actionCreators.success(nextPhotos, nextPage))
+		} catch (e) {
+			dispatch(actionCreators.failure())
+		}
+	}, [nextPage])
+
+	useEffect(() => {
+		fetchPhotos()
+	}, [])
+
 	// Show error only if the first page fails to load
 	if (photos.length === 0) {
 		if (loading) {
@@ -29,7 +44,7 @@ export default function App() {
 			)
 		}
 	}
-	return <PhotoGrid numColumns={3} photos={photos} />
+	return <PhotoGrid numColumns={3} photos={photos} onEndReached={fetchPhotos} />
 }
 
 const styles = StyleSheet.create({
