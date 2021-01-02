@@ -4,15 +4,32 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 
 import { getList } from './api/picsum'
 import { actionCreators, initialState, reducer } from './reducers/photos'
-import PhotoGrid from './components/PhotoGrid'
+import PhotoGrid from './components/PhotoGrid.js'
 
 export default function App() {
-	return (
-		<View style={styles.container}>
-			<Text>Open up App.js to start working on your app!</Text>
-			<StatusBar style='auto' />
-		</View>
-	)
+	const [state, dispatch] = useReducer(reducer, initialState)
+
+	const { photos, nextPage, loading, error } = state
+
+	// Show error only if the first page fails to load
+	if (photos.length === 0) {
+		if (loading) {
+			return (
+				<View style={styles.container}>
+					<ActivityIndicator animating={true} />
+				</View>
+			)
+		}
+
+		if (error) {
+			return (
+				<View style={styles.container}>
+					<Text>Failed to load photos!</Text>
+				</View>
+			)
+		}
+	}
+	return <PhotoGrid numColumns={3} photos={photos} />
 }
 
 const styles = StyleSheet.create({
